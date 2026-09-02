@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>autopoker.net - surf</title>
+<style type="text/css">
+body {
+  background: #0a0a0a;
+  color: #eeeeee;
+  font-family: Verdana, Tahoma, sans-serif;
+  margin: 0;
+  padding: 8px;
+  text-align: center;
+}
+img.promo {
+  max-width: 780px;
+  width: 100%;
+  height: auto;
+  border: 1px solid #333;
+}
+h2 { color: #ffb000; margin: 8px 0; }
+p { font-size: 13px; line-height: 1.4; }
+</style>
+</head>
+<body scroll="auto">
+<img class="promo" src="https://autopoker.net/surf-promo.png" alt="autopoker.net - surf" />
+<h2>autopoker.net - surf</h2>
+<p>Combat surf &bull; Bhop &bull; Fly pads &bull; Guns</p>
+<p><b>!nominate</b> / <b>!nom</b> suggest a map &nbsp;|&nbsp; <b>!rtv</b> vote to change early</p>
+<p>Map vote every <b>25 minutes</b></p>
+</body>
+</html>

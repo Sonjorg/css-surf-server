@@ -1,0 +1,15 @@
+[Unit]
+Description=autopoker.net CSS combat surf server
+After=network.target
+
+[Service]
+Type=simple
+User=azureuser
+WorkingDirectory=/home/azureuser/css-surf/css-server
+Environment=CSS_SURF_ROOT=/home/azureuser/css-surf
+ExecStart=/home/azureuser/css-surf/start-surf.sh
+Restart=on-failure
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

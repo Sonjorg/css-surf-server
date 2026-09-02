@@ -1,0 +1,27 @@
+# SteamCMD tool and cache (re-download with install scripts)
+steamcmd/
+
+# CSS dedicated server binaries (installed via SteamCMD)
+css-server/*
+!css-server/cstrike/
+css-server/cstrike/*
+!css-server/cstrike/cfg/
+!css-server/cstrike/motd.txt
+
+# Runtime logs and local verification output
+*.log
+verify-*.txt
+server-console.log
+
+# SSH / deploy secrets
+deploy_key.local.txt
+*.pem
+*.ppk
+
+# OS / editor
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Duplicate promo at repo root (canonical copy is assets/surf-promo.png)
+surf promo.png
