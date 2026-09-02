@@ -22,8 +22,10 @@ p { font-size: 13px; line-height: 1.4; }
 </style>
 </head>
 <body scroll="auto">
+<a href="https://autopoker.net" target="_blank">
 <img class="promo" src="https://autopoker.net/surf-promo.png" alt="autopoker.net - surf" />
-<h2>autopoker.net - surf</h2>
+</a>
+<h2><a href="https://autopoker.net" style="color:#ffb000;text-decoration:none;">autopoker.net - surf</a></h2>
 <p>Combat surf &bull; Bhop &bull; Fly pads &bull; Guns</p>
 <p><b>!nominate</b> / <b>!nom</b> suggest a map &nbsp;|&nbsp; <b>!rtv</b> vote to change early</p>
 <p>Map vote every <b>25 minutes</b></p>

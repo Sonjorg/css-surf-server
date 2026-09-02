@@ -104,9 +104,12 @@ Invoke-Ssh "mkdir -p $REMOTE_ROOT $REMOTE_SERVER/cstrike/cfg/sourcemod $REMOTE_S
 if (-not $SkipPromo) {
     $promoLocal = Join-Path $Root "assets\surf-promo.png"
     if (-not (Test-Path $promoLocal)) {
+        $autopokerPromo = Join-Path $Root "autopokersurf.png"
         $fallback = Join-Path $Root "surf promo.png"
-        if (Test-Path $fallback) {
-            New-Item -ItemType Directory -Force -Path (Join-Path $Root "assets") | Out-Null
+        New-Item -ItemType Directory -Force -Path (Join-Path $Root "assets") | Out-Null
+        if (Test-Path $autopokerPromo) {
+            Copy-Item $autopokerPromo $promoLocal -Force
+        } elseif (Test-Path $fallback) {
             Copy-Item $fallback $promoLocal -Force
         }
     }
