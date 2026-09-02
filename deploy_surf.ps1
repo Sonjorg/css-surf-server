@@ -39,6 +39,8 @@ $REMOTE_ROOT = "/home/azureuser/css-surf"
 $REMOTE_SERVER = "$REMOTE_ROOT/css-server"
 $WEB_ROOT = "/home/azureuser/pokerfl/build/web_landing"
 $PROMO_URL = "https://autopoker.net/surf-promo.png"
+$FASTDL_URL = "https://autopoker.net/css-fastdl/cstrike"
+$FASTDL_ROOT = "$WEB_ROOT/css-fastdl/cstrike"
 
 function Assert-Exit([string]$Step) {
     if ($LASTEXITCODE -ne 0) { throw "$Step failed (exit $LASTEXITCODE)" }
@@ -96,6 +98,50 @@ function Sync-SurfMaps {
     }
 }
 
+function Sync-FastDownload {
+    Write-Host "Linking maps for fast download at $FASTDL_URL/maps/ ..."
+    $fastDlCmd = @"
+mkdir -p $FASTDL_ROOT
+ln -sfn $REMOTE_SERVER/cstrike/maps $FASTDL_ROOT/maps
+# nginx (www-data) must traverse home dirs and read map files
+chmod o+x /home/azureuser /home/azureuser/pokerfl /home/azureuser/pokerfl/build $WEB_ROOT
+chmod o+x $REMOTE_ROOT $REMOTE_SERVER $REMOTE_SERVER/cstrike
+chmod -R o+rX $FASTDL_ROOT $REMOTE_SERVER/cstrike/maps
+if command -v bzip2 >/dev/null 2>&1; then
+  for f in $REMOTE_SERVER/cstrike/maps/surf_*.bsp; do
+    [ -f "`$f" ] || continue
+    bzip2 -kf "`$f"
+  done
+  chmod o+rX $REMOTE_SERVER/cstrike/maps/*.bz2 2>/dev/null || true
+fi
+"@
+    Invoke-Ssh $fastDlCmd
+}
+
+function Ensure-NginxFastDl {
+    Write-Host "Ensuring nginx serves map fast-download URLs..."
+    $nginxCmd = @'
+SNIPPET=/etc/nginx/snippets/css-surf-fastdl.conf
+if [ ! -f "$SNIPPET" ]; then
+  sudo mkdir -p /etc/nginx/snippets
+  sudo tee "$SNIPPET" >/dev/null <<'EOF'
+# css-surf-fastdl — CSS map downloads (do not route to SPA index.html)
+location /css-fastdl/ {
+    add_header Access-Control-Allow-Origin "*" always;
+    types { application/octet-stream bsp bz2; }
+    default_type application/octet-stream;
+    try_files $uri =404;
+}
+EOF
+fi
+if ! grep -q css-surf-fastdl.conf /etc/nginx/sites-enabled/default; then
+  sudo sed -i '/location \/ {/i\    include /etc/nginx/snippets/css-surf-fastdl.conf;' /etc/nginx/sites-enabled/default
+fi
+sudo nginx -t && sudo systemctl reload nginx
+'@
+    Invoke-Ssh $nginxCmd
+}
+
 if (-not (Test-Path $KEY)) { throw "SSH key not found: $KEY" }
 Write-Host "Preflight OK. Deploy target: $SERVER"
 
@@ -131,6 +177,8 @@ if (-not $SkipInstall) {
 
 Sync-SurfConfigs
 Sync-SurfMaps
+Sync-FastDownload
+Ensure-NginxFastDl
 
 Write-Host "Installing systemd service css-surf..."
 $serviceCmd = @"
@@ -146,6 +194,7 @@ Invoke-Ssh $serviceCmd
 Write-Host ""
 Write-Host "Deploy complete."
 Write-Host "  Promo / MOTD image: $PROMO_URL"
+Write-Host "  Map fast download:  $FASTDL_URL/maps/"
 Write-Host "  Connect:            connect 20.251.169.134:27015"
 Write-Host "  Service logs:       ssh ... 'sudo journalctl -u css-surf -f'"
 Write-Host ""
